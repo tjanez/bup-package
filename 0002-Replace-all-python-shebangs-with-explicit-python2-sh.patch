@@ -1,0 +1,504 @@
+From 1b88ebfa2c827e7a8354b167a2fd58df0be7e013 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.j@nez.si>
+Date: Sun, 10 May 2015 21:31:27 +0200
+Subject: [PATCH 2/5] Replace all python shebangs with explicit python2
+ shebangs.
+
+Distributions are switching to Python3 by default (e.g. Fedora 23,
+Ubuntu 16.04 LTS) and using explicit python2 shebangs will ensure
+that bup still works properly after the switch.
+---
+ cmd/bloom-cmd.py            | 2 +-
+ cmd/cat-file-cmd.py         | 2 +-
+ cmd/daemon-cmd.py           | 2 +-
+ cmd/damage-cmd.py           | 2 +-
+ cmd/drecurse-cmd.py         | 2 +-
+ cmd/fsck-cmd.py             | 2 +-
+ cmd/ftp-cmd.py              | 2 +-
+ cmd/fuse-cmd.py             | 2 +-
+ cmd/help-cmd.py             | 2 +-
+ cmd/import-duplicity-cmd.py | 2 +-
+ cmd/index-cmd.py            | 2 +-
+ cmd/init-cmd.py             | 2 +-
+ cmd/join-cmd.py             | 2 +-
+ cmd/list-idx-cmd.py         | 2 +-
+ cmd/ls-cmd.py               | 2 +-
+ cmd/margin-cmd.py           | 2 +-
+ cmd/memtest-cmd.py          | 2 +-
+ cmd/meta-cmd.py             | 2 +-
+ cmd/midx-cmd.py             | 2 +-
+ cmd/mux-cmd.py              | 2 +-
+ cmd/newliner-cmd.py         | 2 +-
+ cmd/on--server-cmd.py       | 2 +-
+ cmd/on-cmd.py               | 2 +-
+ cmd/random-cmd.py           | 2 +-
+ cmd/restore-cmd.py          | 2 +-
+ cmd/save-cmd.py             | 2 +-
+ cmd/server-cmd.py           | 2 +-
+ cmd/split-cmd.py            | 2 +-
+ cmd/tag-cmd.py              | 2 +-
+ cmd/tick-cmd.py             | 2 +-
+ cmd/version-cmd.py          | 2 +-
+ cmd/web-cmd.py              | 2 +-
+ cmd/xstat-cmd.py            | 2 +-
+ config/configure            | 4 ++--
+ main.py                     | 2 +-
+ t/cleanup-mounts-under      | 2 +-
+ t/hardlink-sets             | 2 +-
+ t/id-other-than             | 2 +-
+ t/mksock                    | 2 +-
+ t/ns-timestamp-resolutions  | 2 +-
+ t/root-status               | 2 +-
+ t/subtree-hash              | 2 +-
+ t/unknown-owner             | 2 +-
+ wvtest.py                   | 2 +-
+ 44 files changed, 45 insertions(+), 45 deletions(-)
+
+diff --git a/cmd/bloom-cmd.py b/cmd/bloom-cmd.py
+index cd4506d..68dab80 100755
+--- a/cmd/bloom-cmd.py
++++ b/cmd/bloom-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, glob, tempfile
+ from bup import options, git, bloom
+ from bup.helpers import *
+diff --git a/cmd/cat-file-cmd.py b/cmd/cat-file-cmd.py
+index 8948ff2..b1aa78b 100755
+--- a/cmd/cat-file-cmd.py
++++ b/cmd/cat-file-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, stat
+ from bup import options, git, vfs
+ from bup.helpers import *
+diff --git a/cmd/daemon-cmd.py b/cmd/daemon-cmd.py
+index c90e3e4..ddfc70a 100755
+--- a/cmd/daemon-cmd.py
++++ b/cmd/daemon-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, getopt, socket, subprocess, fcntl
+ from bup import options, path
+ from bup.helpers import *
+diff --git a/cmd/damage-cmd.py b/cmd/damage-cmd.py
+index 49dbed0..a1e6c2d 100755
+--- a/cmd/damage-cmd.py
++++ b/cmd/damage-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, random
+ from bup import options
+ from bup.helpers import *
+diff --git a/cmd/drecurse-cmd.py b/cmd/drecurse-cmd.py
+index cdf6680..16af3db 100755
+--- a/cmd/drecurse-cmd.py
++++ b/cmd/drecurse-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ from os.path import relpath
+ from bup import options, drecurse
+diff --git a/cmd/fsck-cmd.py b/cmd/fsck-cmd.py
+index 794c755..e68f624 100755
+--- a/cmd/fsck-cmd.py
++++ b/cmd/fsck-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, glob, subprocess
+ from bup import options, git
+ from bup.helpers import *
+diff --git a/cmd/ftp-cmd.py b/cmd/ftp-cmd.py
+index baa1e08..846649d 100755
+--- a/cmd/ftp-cmd.py
++++ b/cmd/ftp-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, stat, fnmatch
+ from bup import options, git, shquote, vfs, ls
+ from bup.helpers import *
+diff --git a/cmd/fuse-cmd.py b/cmd/fuse-cmd.py
+index 30776cb..b0ec725 100755
+--- a/cmd/fuse-cmd.py
++++ b/cmd/fuse-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, errno
+ from bup import options, git, vfs, xstat
+ from bup.helpers import *
+diff --git a/cmd/help-cmd.py b/cmd/help-cmd.py
+index 56a4148..ed7cd61 100755
+--- a/cmd/help-cmd.py
++++ b/cmd/help-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, glob
+ from bup import options, path
+ 
+diff --git a/cmd/import-duplicity-cmd.py b/cmd/import-duplicity-cmd.py
+index 163d4fa..3b72d37 100755
+--- a/cmd/import-duplicity-cmd.py
++++ b/cmd/import-duplicity-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ from calendar import timegm
+ from pipes import quote
+diff --git a/cmd/index-cmd.py b/cmd/index-cmd.py
+index 6f2adf4..93554da 100755
+--- a/cmd/index-cmd.py
++++ b/cmd/index-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import sys, stat, time, os, errno, re
+ from bup import metadata, options, git, index, drecurse, hlinkdb
+diff --git a/cmd/init-cmd.py b/cmd/init-cmd.py
+index 2e4a151..cd86612 100755
+--- a/cmd/init-cmd.py
++++ b/cmd/init-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys
+ 
+ from bup import git, options, client
+diff --git a/cmd/join-cmd.py b/cmd/join-cmd.py
+index 042b402..dfbf5a5 100755
+--- a/cmd/join-cmd.py
++++ b/cmd/join-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys
+ from bup import git, options, client
+ from bup.helpers import *
+diff --git a/cmd/list-idx-cmd.py b/cmd/list-idx-cmd.py
+index a3e3dc9..a9f6477 100755
+--- a/cmd/list-idx-cmd.py
++++ b/cmd/list-idx-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os
+ from bup import git, options
+ from bup.helpers import *
+diff --git a/cmd/ls-cmd.py b/cmd/ls-cmd.py
+index 94a7131..b00c41d 100755
+--- a/cmd/ls-cmd.py
++++ b/cmd/ls-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys
+ from bup import git, vfs, ls
+ from bup.helpers import *
+diff --git a/cmd/margin-cmd.py b/cmd/margin-cmd.py
+index 9b7fd60..798512b 100755
+--- a/cmd/margin-cmd.py
++++ b/cmd/margin-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, struct, math
+ from bup import options, git, _helpers
+ from bup.helpers import *
+diff --git a/cmd/memtest-cmd.py b/cmd/memtest-cmd.py
+index 0e3cf0c..6798d88 100755
+--- a/cmd/memtest-cmd.py
++++ b/cmd/memtest-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, re, struct, time, resource
+ from bup import git, bloom, midx, options, _helpers
+ from bup.helpers import *
+diff --git a/cmd/meta-cmd.py b/cmd/meta-cmd.py
+index cac26b5..9d43b8a 100755
+--- a/cmd/meta-cmd.py
++++ b/cmd/meta-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ # Copyright (C) 2010 Rob Browning
+ #
+diff --git a/cmd/midx-cmd.py b/cmd/midx-cmd.py
+index a18707d..e22d573 100755
+--- a/cmd/midx-cmd.py
++++ b/cmd/midx-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, math, struct, glob, resource
+ import tempfile
+ from bup import options, git, midx, _helpers, xstat
+diff --git a/cmd/mux-cmd.py b/cmd/mux-cmd.py
+index b70c0a8..49dc3d6 100755
+--- a/cmd/mux-cmd.py
++++ b/cmd/mux-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import os, sys, subprocess, struct
+ from bup import options
+ from bup.helpers import *
+diff --git a/cmd/newliner-cmd.py b/cmd/newliner-cmd.py
+index 68d327b..c485ee5 100755
+--- a/cmd/newliner-cmd.py
++++ b/cmd/newliner-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, re
+ from bup import options
+ from bup import _helpers   # fixes up sys.argv on import
+diff --git a/cmd/on--server-cmd.py b/cmd/on--server-cmd.py
+index a6f3e21..e1e284f 100755
+--- a/cmd/on--server-cmd.py
++++ b/cmd/on--server-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, struct
+ from bup import options, helpers
+ 
+diff --git a/cmd/on-cmd.py b/cmd/on-cmd.py
+index 9d6f683..4be8ad8 100755
+--- a/cmd/on-cmd.py
++++ b/cmd/on-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, struct, getopt, subprocess, signal
+ from subprocess import PIPE
+ from bup import options, ssh, path
+diff --git a/cmd/random-cmd.py b/cmd/random-cmd.py
+index 4be3660..3fd8a6c 100755
+--- a/cmd/random-cmd.py
++++ b/cmd/random-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys
+ from bup import options, _helpers
+ from bup.helpers import *
+diff --git a/cmd/restore-cmd.py b/cmd/restore-cmd.py
+index d527489..e4f96cc 100755
+--- a/cmd/restore-cmd.py
++++ b/cmd/restore-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import copy, errno, sys, stat, re
+ from bup import options, git, metadata, vfs
+ from bup.helpers import *
+diff --git a/cmd/save-cmd.py b/cmd/save-cmd.py
+index fc93408..95c18cf 100755
+--- a/cmd/save-cmd.py
++++ b/cmd/save-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, stat, time, math
+ from cStringIO import StringIO
+ from errno import EACCES
+diff --git a/cmd/server-cmd.py b/cmd/server-cmd.py
+index 43a3fce..10ec142 100755
+--- a/cmd/server-cmd.py
++++ b/cmd/server-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import os, sys, struct
+ from bup import options, git
+ from bup.helpers import *
+diff --git a/cmd/split-cmd.py b/cmd/split-cmd.py
+index 70daf7c..a85428e 100755
+--- a/cmd/split-cmd.py
++++ b/cmd/split-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import os, sys, time
+ from bup import hashsplit, git, options, client
+ from bup.helpers import *
+diff --git a/cmd/tag-cmd.py b/cmd/tag-cmd.py
+index f33855e..b4dd019 100755
+--- a/cmd/tag-cmd.py
++++ b/cmd/tag-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import sys
+ import os
+diff --git a/cmd/tick-cmd.py b/cmd/tick-cmd.py
+index 4d462ad..7b24d1f 100755
+--- a/cmd/tick-cmd.py
++++ b/cmd/tick-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, time
+ from bup import options
+ 
+diff --git a/cmd/version-cmd.py b/cmd/version-cmd.py
+index 645f25f..fcc2b95 100755
+--- a/cmd/version-cmd.py
++++ b/cmd/version-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys
+ from bup import options
+ from bup import _version
+diff --git a/cmd/web-cmd.py b/cmd/web-cmd.py
+index 1c515e2..cf4f376 100755
+--- a/cmd/web-cmd.py
++++ b/cmd/web-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, stat, urllib, mimetypes, posixpath, time, webbrowser
+ import urllib
+ from bup import options, git, vfs
+diff --git a/cmd/xstat-cmd.py b/cmd/xstat-cmd.py
+index 85071d2..2c16d48 100755
+--- a/cmd/xstat-cmd.py
++++ b/cmd/xstat-cmd.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ # Copyright (C) 2010 Rob Browning
+ #
+ # This code is covered under the terms of the GNU Library General
+diff --git a/config/configure b/config/configure
+index ccc02b2..2b1b4e5 100755
+--- a/config/configure
++++ b/config/configure
+@@ -42,8 +42,8 @@ if [ -z "$MAKE_VERSION" ]; then
+ fi
+ expr "$MAKE_VERSION" '>=' '3.81' || AC_FAIL "ERROR: $MAKE must be >= version 3.81"
+ 
+-if test -z "$(bup_find_prog python '')"; then
+-    AC_FAIL "ERROR: unable to find python"
++if test -z "$(bup_find_prog python2 '')"; then
++    AC_FAIL "ERROR: unable to find python2"
+ fi
+ 
+ if test -z "$(bup_find_prog git '')"; then
+diff --git a/main.py b/main.py
+index 45a0e8a..5c7c9d7 100755
+--- a/main.py
++++ b/main.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ import sys, os, subprocess, signal, getopt
+ 
+ argv = sys.argv
+diff --git a/t/cleanup-mounts-under b/t/cleanup-mounts-under
+index a8ba611..8af0200 100755
+--- a/t/cleanup-mounts-under
++++ b/t/cleanup-mounts-under
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import os.path, re, subprocess, sys
+ 
+diff --git a/t/hardlink-sets b/t/hardlink-sets
+index 653b4d2..d3852be 100755
+--- a/t/hardlink-sets
++++ b/t/hardlink-sets
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import os, stat, sys
+ 
+diff --git a/t/id-other-than b/t/id-other-than
+index cfa219d..cb76717 100755
+--- a/t/id-other-than
++++ b/t/id-other-than
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import grp
+ import pwd
+diff --git a/t/mksock b/t/mksock
+index ee2dbfe..370b753 100755
+--- a/t/mksock
++++ b/t/mksock
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import socket, sys
+ 
+diff --git a/t/ns-timestamp-resolutions b/t/ns-timestamp-resolutions
+index d1bb785..2b40243 100755
+--- a/t/ns-timestamp-resolutions
++++ b/t/ns-timestamp-resolutions
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import os, sys
+ 
+diff --git a/t/root-status b/t/root-status
+index 9fb12cb..715a651 100755
+--- a/t/root-status
++++ b/t/root-status
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import sys
+ 
+diff --git a/t/subtree-hash b/t/subtree-hash
+index 691c207..3c0675b 100755
+--- a/t/subtree-hash
++++ b/t/subtree-hash
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import os, sys
+ 
+diff --git a/t/unknown-owner b/t/unknown-owner
+index 00442a4..079fab4 100755
+--- a/t/unknown-owner
++++ b/t/unknown-owner
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ 
+ import grp
+ import pwd
+diff --git a/wvtest.py b/wvtest.py
+index cc68601..3f799ba 100755
+--- a/wvtest.py
++++ b/wvtest.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ #
+ # WvTest:
+ #   Copyright (C)2007-2012 Versabanq Innovations Inc. and contributors.
+-- 
+1.9.3
+

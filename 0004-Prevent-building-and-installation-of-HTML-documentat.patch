@@ -1,0 +1,41 @@
+From a5c5a960b0ac18a67130f17aa49d6498c4433cf6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.janez@tadej.hicsalta.si>
+Date: Sun, 10 May 2015 21:39:25 +0200
+Subject: [PATCH 4/5] Prevent building and installation of HTML documentation.
+
+---
+ Documentation/Makefile | 2 +-
+ Makefile               | 4 ----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index 067f698..dab62aa 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -12,7 +12,7 @@ BUP_DATE:=$(shell ../bup version --date)
+ 
+ default: all
+ 
+-all: man html
++all: man
+ 
+ man: $(patsubst %.md,%.1,$(wildcard *.md))
+ 
+diff --git a/Makefile b/Makefile
+index 6c4053a..812f570 100644
+--- a/Makefile
++++ b/Makefile
+@@ -45,10 +45,6 @@ install: all
+ 	  $(INSTALL) -m 0644 \
+ 		Documentation/*.1 \
+ 		$(MANDIR)/man1
+-	[ ! -e Documentation/.docs-available ] || \
+-	  $(INSTALL) -m 0644 \
+-		Documentation/*.html \
+-		$(DOCDIR)
+ 	$(INSTALL) -pm 0755 bup $(BINDIR)
+ 	$(INSTALL) -pm 0755 \
+ 		cmd/bup-* \
+-- 
+1.9.3
+

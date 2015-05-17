@@ -1,0 +1,149 @@
+From c13fd7e7618d6f9509af023551774e3258f52145 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.j@nez.si>
+Date: Sun, 10 May 2015 21:08:31 +0200
+Subject: [PATCH 1/5] Tests: replace calls to 'python' with calls to '$PYTHON'.
+
+Since it is possible to specify which Python executable to use by
+setting the 'PYTHON' environment variable, it is more consistent to
+always refer to '$PYTHON' in the tests.
+---
+ t/lib.sh                    |  2 +-
+ t/test-fuse.sh              |  2 +-
+ t/test-ls.sh                |  6 +++---
+ t/test-meta.sh              | 12 ++++++------
+ t/test-restore-map-owner.sh |  2 +-
+ t/test-sparse-files.sh      |  2 +-
+ 6 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/t/lib.sh b/t/lib.sh
+index 84b9421..eb5817e 100644
+--- a/t/lib.sh
++++ b/t/lib.sh
+@@ -11,7 +11,7 @@ realpath()
+ {
+     test "$#" -eq 1 || return $?
+     echo "$1" | \
+-        PYTHONPATH="$bup_t_lib_script_home/../lib" python -c \
++        PYTHONPATH="$bup_t_lib_script_home/../lib" $PYTHON -c \
+         "import sys, bup.helpers; print bup.helpers.realpath(sys.stdin.readline())" \
+         || return $?
+ }
+diff --git a/t/test-fuse.sh b/t/test-fuse.sh
+index c199182..94510ae 100755
+--- a/t/test-fuse.sh
++++ b/t/test-fuse.sh
+@@ -31,7 +31,7 @@ bup() { "$top/bup" "$@"; }
+ WVPASS bup init
+ WVPASS cd "$tmpdir"
+ 
+-savestamp1=$(WVPASS python -c 'import time; print int(time.time())') || exit $?
++savestamp1=$(WVPASS $PYTHON -c 'import time; print int(time.time())') || exit $?
+ savestamp2=$(($savestamp1 + 1))
+ savename1="$(printf '%(%Y-%m-%d-%H%M%S)T' "$savestamp1")" || exit $?
+ savename2="$(printf '%(%Y-%m-%d-%H%M%S)T' "$savestamp2")" || exit $?
+diff --git a/t/test-ls.sh b/t/test-ls.sh
+index 77c5d09..9aedd13 100755
+--- a/t/test-ls.sh
++++ b/t/test-ls.sh
+@@ -130,7 +130,7 @@ symlink_date="$(WVPASS echo "$symlink_bup_info" \
+     || exit $?
+ 
+ if test "$(uname -s)" != NetBSD; then
+-    symlink_size="$(WVPASS python -c "import os
++    symlink_size="$(WVPASS $PYTHON -c "import os
+ print os.lstat('src/symlink').st_size")" || exit $?
+ else
+     # NetBSD appears to return varying sizes, so for now, just ignore it.
+@@ -140,9 +140,9 @@ else
+ fi
+ 
+ uid="$(id -u)" || exit $?
+-gid="$(python -c 'import os; print os.stat("src").st_gid')" || exit $?
++gid="$($PYTHON -c 'import os; print os.stat("src").st_gid')" || exit $?
+ user="$(id -un)" || exit $?
+-group="$(python -c 'import grp, os;
++group="$($PYTHON -c 'import grp, os;
+ print grp.getgrgid(os.stat("src").st_gid)[0]')" || exit $?
+ 
+ WVPASSEQ "$(bup ls -l src/latest"$tmpdir"/src | tr -s ' ' ' ')" \
+diff --git a/t/test-meta.sh b/t/test-meta.sh
+index 2c886cc..9115ab8 100755
+--- a/t/test-meta.sh
++++ b/t/test-meta.sh
+@@ -435,9 +435,9 @@ src/foo/3"
+ 
+     tmpdir="$(WVPASS wvmktempdir)" || exit $?    
+ 
+-    first_group="$(WVPASS python -c 'import os,grp; \
++    first_group="$(WVPASS $PYTHON -c 'import os,grp; \
+       print grp.getgrgid(os.getgroups()[0])[0]')" || exit $?
+-    last_group="$(python -c 'import os,grp; \
++    last_group="$($PYTHON -c 'import os,grp; \
+       print grp.getgrgid(os.getgroups()[-1])[0]')" || exit $?
+     last_group_erx="$(escape-erx "$last_group")"
+ 
+@@ -675,7 +675,7 @@ if [ "$root_status" = root ]; then
+             WVPASS mkdir "$testfs"/src/foo
+             WVPASS touch "$testfs"/src/bar
+             PYTHONPATH="$TOP/lib" \
+-                WVPASS python -c "from bup import xstat; \
++                WVPASS $PYTHON -c "from bup import xstat; \
+                 x = xstat.timespec_to_nsecs((42, 0));\
+                    xstat.utime('$testfs/src/foo', (x, x));\
+                    xstat.utime('$testfs/src/bar', (x, x));"
+@@ -716,7 +716,7 @@ if [ "$root_status" = root ]; then
+                 WVPASS cd "$testfs_limited"/src-restore
+                 WVFAIL bup meta --extract --file "$testfs"/src.meta 2>&1 \
+                     | WVPASS grep -e '^Linux chattr:' \
+-                    | WVPASS python -c \
++                    | WVPASS $PYTHON -c \
+                     'import sys; exit(not len(sys.stdin.readlines()) == 3)'
+             ) || exit $?
+         ) || exit $?
+@@ -740,7 +740,7 @@ if [ "$root_status" = root ]; then
+             WVFAIL bup meta --extract --file "$testfs"/src.meta
+             WVFAIL bup meta --extract --file "$testfs"/src.meta 2>&1 \
+                 | WVPASS grep -e "^xattr\.set '" \
+-                | WVPASS python -c \
++                | WVPASS $PYTHON -c \
+                 'import sys; exit(not len(sys.stdin.readlines()) == 2)'
+         ) || exit $?
+ 
+@@ -762,7 +762,7 @@ if [ "$root_status" = root ]; then
+             WVPASS cd "$testfs_limited"/src-restore
+             WVFAIL bup meta --extract --file "$testfs"/src.meta 2>&1 \
+                 | WVPASS grep -e '^POSIX1e ACL applyto:' \
+-                | WVPASS python -c \
++                | WVPASS $PYTHON -c \
+                 'import sys; exit(not len(sys.stdin.readlines()) == 2)'
+         ) || exit $?
+ 
+diff --git a/t/test-restore-map-owner.sh b/t/test-restore-map-owner.sh
+index e5eeee3..220071b 100755
+--- a/t/test-restore-map-owner.sh
++++ b/t/test-restore-map-owner.sh
+@@ -79,7 +79,7 @@ WVPASS grep -qE "^uid: $other_uid\$" foo-xstat
+ WVPASS grep -qE "^group: $other_group\$" foo-xstat
+ WVPASS grep -qE "^gid: $other_gid\$" foo-xstat
+ 
+-has_uid_gid_0=$(WVPASS python -c "
++has_uid_gid_0=$(WVPASS $PYTHON -c "
+ import grp, pwd
+ try:
+   pwd.getpwuid(0)
+diff --git a/t/test-sparse-files.sh b/t/test-sparse-files.sh
+index 82275ff..9f9307d 100755
+--- a/t/test-sparse-files.sh
++++ b/t/test-sparse-files.sh
+@@ -18,7 +18,7 @@ WVPASS cd "$tmpdir"
+ 
+ # The 3MB guess is semi-arbitrary, but we've been informed that
+ # Lustre, for example, uses 1MB, so guess higher than that, at least.
+-block_size=$(python -c \
++block_size=$($PYTHON -c \
+   "import os; print getattr(os.stat('.'), 'st_blksize', 0) or $mb * 3") \
+     || exit $?
+ data_size=$((block_size * 10))
+-- 
+1.9.3
+
