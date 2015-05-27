@@ -4,7 +4,7 @@
 
 Name: bup
 Version: 0.27
-Release: 0.1%{?prerelease:.%{prerelease}}%{?dist}
+Release: 0.2%{?prerelease:.%{prerelease}}%{?dist}
 Summary: Very efficient backup system based on the git packfile format
 
 # all of the code is licensed as GNU Lesser General Public License v2, except:
@@ -74,6 +74,11 @@ virtual machine images). Some of its features are:
 
 %prep
 %autosetup -n %{name}-%{commit} -S git
+
+# We need an empty line after %%autosetup otherwise it tries to feed the
+# following line (i.e. 'cp %%{SOURCE1} .') to the git command.
+# (This bug only occurs on Fedora <= 20 and EPEL <= 7. Reported as
+# https://bugzilla.redhat.com/show_bug.cgi?id=1225118).
 cp %{SOURCE1} .
 
 
@@ -113,5 +118,8 @@ make test PYTHON=%{__python2}
 
 
 %changelog
+* Wed May 27 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2
+- Added a workaround for an %%autosetup bug on Fedora <= 20 and EPEL <= 7.
+
 * Sun May 17 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.1
 - Initial package.
