@@ -1,0 +1,30 @@
+From ddab04d137d22f0bf99f81c003872067ea4bf2d4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.j@nez.si>
+Date: Mon, 1 Jun 2015 14:33:09 +0200
+Subject: [PATCH 6/6] Attempt to debug test_from_path_error() test failures on
+ Fedora.
+
+This will print out errors stored in 'helpers.saved_errors' and make
+sure that this value is 0 at the start of the test_from_path_error()
+test.
+---
+ lib/bup/t/tmetadata.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/bup/t/tmetadata.py b/lib/bup/t/tmetadata.py
+index 126e1d7..5c13845 100644
+--- a/lib/bup/t/tmetadata.py
++++ b/lib/bup/t/tmetadata.py
+@@ -161,6 +161,9 @@ def _first_err():
+ @wvtest
+ def test_from_path_error():
+     initial_failures = wvfailure_count()
++    print >> sys.stderr, 'previous_saved_errors: ', helpers.saved_errors
++    WVPASS(len(helpers.saved_errors) == 0)
++    clear_errors()
+     if is_superuser() or detect_fakeroot():
+         return
+     tmpdir = tempfile.mkdtemp(dir=bup_tmp, prefix='bup-tmetadata-')
+-- 
+1.9.3
+

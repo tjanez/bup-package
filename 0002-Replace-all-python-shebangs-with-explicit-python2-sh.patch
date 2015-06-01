@@ -1,7 +1,7 @@
 From 1b88ebfa2c827e7a8354b167a2fd58df0be7e013 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.j@nez.si>
 Date: Sun, 10 May 2015 21:31:27 +0200
-Subject: [PATCH 2/5] Replace all python shebangs with explicit python2
+Subject: [PATCH 2/6] Replace all python shebangs with explicit python2
  shebangs.
 
 Distributions are switching to Python3 by default (e.g. Fedora 23,

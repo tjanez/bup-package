@@ -1,7 +1,7 @@
 From c13fd7e7618d6f9509af023551774e3258f52145 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.j@nez.si>
 Date: Sun, 10 May 2015 21:08:31 +0200
-Subject: [PATCH 1/5] Tests: replace calls to 'python' with calls to '$PYTHON'.
+Subject: [PATCH 1/6] Tests: replace calls to 'python' with calls to '$PYTHON'.
 
 Since it is possible to specify which Python executable to use by
 setting the 'PYTHON' environment variable, it is more consistent to
