@@ -1,7 +1,7 @@
 From a5c5a960b0ac18a67130f17aa49d6498c4433cf6 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.janez@tadej.hicsalta.si>
 Date: Sun, 10 May 2015 21:39:25 +0200
-Subject: [PATCH 4/6] Prevent building and installation of HTML documentation.
+Subject: [PATCH 4/7] Prevent building and installation of HTML documentation.
 
 ---
  Documentation/Makefile | 2 +-

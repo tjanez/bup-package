@@ -4,7 +4,7 @@
 
 Name: bup
 Version: 0.27
-Release: 0.2.1%{?prerelease:.%{prerelease}}%{?dist}
+Release: 0.2.16%{?prerelease:.%{prerelease}}%{?dist}
 Summary: Very efficient backup system based on the git packfile format
 
 # all of the code is licensed as GNU Lesser General Public License v2, except:
@@ -35,6 +35,9 @@ Patch4: 0005-Remove-support-for-par2-due-to-issues-with-the-versi.patch
 # Attempt to debug test_from_path_error() test problem with some rebuilds on
 # Fedora COPR and Koji build systems
 Patch5: 0006-Attempt-to-debug-test_from_path_error-test-failures-.patch
+# Attempt to debug errors stored in 'saved_errors' with some rebuilds
+# on Fedora COPR and Koji build systems
+Patch6: 0007-Attempt-to-debug-errors-stored-in-saved_errors-on-Fe.patch
 
 BuildRequires: python2-devel
 BuildRequires: git
@@ -121,7 +124,11 @@ make test PYTHON=%{__python2}
 
 
 %changelog
-* Wed May 27 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2.1
+* Tue Jun 09 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2.16
+- Added a patch that attempts to debug errors stored in 'saved_errors' with
+  some rebuilds on Fedora COPR and Koji build systems
+
+* Mon Jun 01 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2.1
 - Added a patch that attempts to debug test_from_path_error() test problem with
   some rebuilds on Fedora COPR and Koji build systems.
 

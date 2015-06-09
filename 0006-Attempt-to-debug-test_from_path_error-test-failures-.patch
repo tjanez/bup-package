@@ -1,7 +1,7 @@
 From ddab04d137d22f0bf99f81c003872067ea4bf2d4 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.j@nez.si>
 Date: Mon, 1 Jun 2015 14:33:09 +0200
-Subject: [PATCH 6/6] Attempt to debug test_from_path_error() test failures on
+Subject: [PATCH 6/7] Attempt to debug test_from_path_error() test failures on
  Fedora.
 
 This will print out errors stored in 'helpers.saved_errors' and make

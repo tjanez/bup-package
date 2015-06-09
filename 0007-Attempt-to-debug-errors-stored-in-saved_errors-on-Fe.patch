@@ -1,0 +1,82 @@
+From a42838bc174ae463701a82cb2c916f21bd5085e1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.j@nez.si>
+Date: Tue, 9 Jun 2015 23:58:33 +0200
+Subject: [PATCH 7/7] Attempt to debug errors stored in 'saved_errors' on
+ Fedora.
+
+Add print-outs of the 'saved_errors' variable at the end of each test
+in file 'lib/bup/t/tclient.py'. Also make sure that the length of
+'saved_errors' list is 0 at the end of each test in this file.
+
+UPDATE: Add special print-out at the beginning of the
+'test_multiple_suggestions' function since tests revealed that the
+random test failures occur here.
+---
+ lib/bup/t/tclient.py | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/lib/bup/t/tclient.py b/lib/bup/t/tclient.py
+index 0db5cc1..f3d2184 100644
+--- a/lib/bup/t/tclient.py
++++ b/lib/bup/t/tclient.py
+@@ -1,6 +1,6 @@
+ import sys, os, stat, time, random, subprocess, glob, tempfile
+ from bup import client, git
+-from bup.helpers import mkdirp
++from bup.helpers import mkdirp, saved_errors
+ from wvtest import *
+ 
+ bup_tmp = os.path.realpath('../../../t/tmp')
+@@ -37,10 +37,16 @@ def test_server_split_with_indexes():
+     rw.new_blob(s1)
+     if wvfailure_count() == initial_failures:
+         subprocess.call(['rm', '-rf', tmpdir])
++    print 'saved_errors at the end of test_server_split_with_indexes: ', saved_errors
++    WVPASS(len(saved_errors) == 0)
+     
+ 
+ @wvtest
+ def test_multiple_suggestions():
++    print >> sys.stderr, 'saved_errors at the beginning of test_multiple_suggestions: ', saved_errors
++    WVPASS(len(saved_errors) == 0)
++    global saved_errors
++    saved_errors = []
+     initial_failures = wvfailure_count()
+     tmpdir = tempfile.mkdtemp(dir=bup_tmp, prefix='bup-tclient-')
+     os.environ['BUP_MAIN_EXE'] = '../../../bup'
+@@ -74,6 +80,8 @@ def test_multiple_suggestions():
+     WVPASSEQ(len(glob.glob(c.cachedir+IDX_PAT)), 3)
+     if wvfailure_count() == initial_failures:
+         subprocess.call(['rm', '-rf', tmpdir])
++    print >> sys.stderr, 'saved_errors: ', saved_errors
++    WVPASS(len(saved_errors) == 0)
+ 
+ 
+ @wvtest
+@@ -99,6 +107,8 @@ def test_dumb_client_server():
+     WVPASSEQ(len(glob.glob(c.cachedir+IDX_PAT)), 2)
+     if wvfailure_count() == initial_failures:
+         subprocess.call(['rm', '-rf', tmpdir])
++    print >> sys.stderr, 'saved_errors: ', saved_errors
++    WVPASS(len(saved_errors) == 0)
+ 
+ 
+ @wvtest
+@@ -141,6 +151,8 @@ def test_midx_refreshing():
+     WVPASSEQ(len(pi.packs), 1)
+     if wvfailure_count() == initial_failures:
+         subprocess.call(['rm', '-rf', tmpdir])
++    print >> sys.stderr, 'saved_errors: ', saved_errors
++    WVPASS(len(saved_errors) == 0)
+ 
+ 
+ @wvtest
+@@ -162,3 +174,5 @@ def test_remote_parsing():
+         WVFAIL()
+     except client.ClientError:
+         WVPASS()
++    print >> sys.stderr, 'saved_errors: ', saved_errors
++    WVPASS(len(saved_errors) == 0)
+-- 
+1.9.3
+
