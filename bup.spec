@@ -4,7 +4,7 @@
 
 Name: bup
 Version: 0.27
-Release: 0.1%{?prerelease:.%{prerelease}}%{?dist}
+Release: 0.2%{?prerelease:.%{prerelease}}%{?dist}
 Summary: Very efficient backup system based on the git packfile format
 
 # all of the code is licensed as GNU Lesser General Public License v2, except:
@@ -37,6 +37,8 @@ BuildRequires: python2-devel
 BuildRequires: git
 # Required for building documentation
 BuildRequires: pandoc
+# Required for running tests
+BuildRequires: perl(Time::HiRes)
 
 Requires: git
 Requires: pyxattr
@@ -113,5 +115,9 @@ make test PYTHON=%{__python2}
 
 
 %changelog
+* Thu Oct 08 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2
+- Added perl(Time::HiRes) to BuildRequires since it is required for running the
+  tests.
+
 * Sun May 17 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.1
 - Initial package.
