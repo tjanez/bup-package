@@ -32,6 +32,11 @@ Patch3: 0004-Prevent-building-and-installation-of-HTML-documentat.patch
 # Remove support for 'par2' due to issues with the version in Fedora
 # For more info, see README.Fedora
 Patch4: 0005-Remove-support-for-par2-due-to-issues-with-the-versi.patch
+# Temporarily disable test_from_path_error() test that fails on Fedora Koji
+# and COPR build systems.
+# This issue has been reported upstream:
+# https://groups.google.com/d/msg/bup-list/7K0gD274i_A/6ZjA1La6VK8J
+Patch5: 0006-Disable-test_from_path_error-test-that-fails-on-Fedo.patch
 
 BuildRequires: python2-devel
 BuildRequires: git
@@ -115,9 +120,11 @@ make test PYTHON=%{__python2}
 
 
 %changelog
-* Thu Oct 08 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2
+* Wed Oct 14 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2
 - Added perl(Time::HiRes) to BuildRequires since it is required for running the
   tests.
+- Temporarily disable test_from_path_error() test that fails on Fedora Koji and
+  COPR build systems.
 
 * Sun May 17 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.1
 - Initial package.
