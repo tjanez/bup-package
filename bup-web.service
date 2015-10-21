@@ -1,0 +1,12 @@
+[Unit]
+Description=Web server for browsing through bup repositories
+Documentation=man:bup-web(1)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bup web
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

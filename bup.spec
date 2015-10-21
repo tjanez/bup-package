@@ -4,7 +4,7 @@
 
 Name: bup
 Version: 0.27
-Release: 0.2%{?prerelease:.%{prerelease}}%{?dist}
+Release: 0.3%{?prerelease:.%{prerelease}}%{?dist}
 Summary: Very efficient backup system based on the git packfile format
 
 # all of the code is licensed as GNU Lesser General Public License v2, except:
@@ -16,6 +16,7 @@ License: LGPLv2 and BSD and Python
 URL: https://bup.github.io/
 Source0: https://github.com/%{name}/%{name}/archive/%{commit}/%{name}-%{commit}.tar.gz
 Source1: README.Fedora
+Source2: bup-web.service
 
 # Replace calls to 'python' with calls to '$PYTHON' in all tests. In
 # combination with setting the 'PYTHON' environment variable to 'python2', this
@@ -42,6 +43,8 @@ BuildRequires: python2-devel
 BuildRequires: git
 # Required for building documentation
 BuildRequires: pandoc
+# Required for preparing systemd service for 'bup web' command
+BuildRequires: systemd
 # Required for running tests
 BuildRequires: perl(Time::HiRes)
 
@@ -50,8 +53,6 @@ Requires: pyxattr
 Requires: pylibacl
 # Only required for 'bup fuse' command
 Requires: fuse-python
-# Only required for 'bup web' command
-Requires: python-tornado
 
 
 %description
@@ -78,6 +79,23 @@ virtual machine images). Some of its features are:
 * One can mount a bup repository as a FUSE filesystem and access the contents
   that way, or even export it over Samba.
 
+#
+# bup-web
+#
+%package web
+License: LGPLv2
+Summary: Web server for browsing through bup repositories
+URL: https://bup.github.io/
+Requires: bup = %{version}-%{release}
+Requires: python-tornado
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+
+%description web
+Provides the "bup web" command which runs a web server for browsing through
+bup repositories.
+
 
 %prep
 %autosetup -n %{name}-%{commit} -S git
@@ -103,6 +121,9 @@ make install MANDIR=%{buildroot}%{_mandir} \
 # Fix hard-coded libdir location in bup's executable
 sed -i 's|/lib/bup|/%{_lib}/bup|' %{buildroot}%{_bindir}/bup
 
+# Install systemd unit file
+mkdir -p %{buildroot}%{_userunitdir}
+install -p -m 0644 %{SOURCE2} %{buildroot}%{_userunitdir}
 
 %check
 # Run the built-in test suite containing 3800+ tests
@@ -110,16 +131,41 @@ sed -i 's|/lib/bup|/%{_lib}/bup|' %{buildroot}%{_bindir}/bup
 make test PYTHON=%{__python2}
 
 
+%post web
+%systemd_user_post bup-web.service
+
+
+%preun web
+%systemd_user_preun bup-web.service
+
+
+%postun web
+%systemd_user_postun_with_restart bup-web.service
+
+
+%files web
+%{_libdir}/%{name}/cmd/bup-web
+%{_libdir}/%{name}/web/
+%{_userunitdir}/bup-web.service
+%{_mandir}/man1/bup-web.1*
+
 %files
 %doc README.md README.Fedora
 %license LICENSE
 %{_bindir}/%{name}
 %{_libdir}/%{name}/
+%exclude %{_libdir}/%{name}/cmd/bup-web
+%exclude %{_libdir}/%{name}/web/
 %{_mandir}/man1/%{name}.1*
 %{_mandir}/man1/%{name}-*.1*
+%exclude %{_mandir}/man1/bup-web.1*
 
 
 %changelog
+* Wed Oct 21 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.3
+- Split bup web server into a separate sub-package.
+- Added systemd service for running the bup web server.
+
 * Wed Oct 14 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2
 - Added perl(Time::HiRes) to BuildRequires since it is required for running the
   tests.
