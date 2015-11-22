@@ -132,7 +132,11 @@ make test PYTHON=%{__python2}
 
 
 %post web
-%systemd_user_post bup-web.service
+# NOTE: %%systemd_user_post macro is currently broken.
+# Upstream pull request: https://github.com/systemd/systemd/pull/1986
+# After resolving this upstream, replace the line below with:
+# %%systemd_user_post bup-web.service
+%systemd_post \\--user \\--global bup-web.service
 
 
 %preun web
@@ -162,9 +166,10 @@ make test PYTHON=%{__python2}
 
 
 %changelog
-* Wed Oct 21 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.3
+* Sun Nov 22 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.3
 - Split bup web server into a separate sub-package.
 - Added systemd service for running the bup web server.
+- Added a work-around for a bug in systemd's %%systemd_user_post macro.
 
 * Wed Oct 14 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2
 - Added perl(Time::HiRes) to BuildRequires since it is required for running the
