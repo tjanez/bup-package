@@ -15,8 +15,9 @@ Summary: Very efficient backup system based on the git packfile format
 License: LGPLv2 and BSD and Python
 URL: https://bup.github.io/
 Source0: https://github.com/%{name}/%{name}/archive/%{commit}/%{name}-%{commit}.tar.gz
-Source1: README.Fedora
+Source1: README.Fedora.md
 Source2: bup-web.service
+Source3: README-bup-web.Fedora.md
 
 # Replace calls to 'python' with calls to '$PYTHON' in all tests. In
 # combination with setting the 'PYTHON' environment variable to 'python2', this
@@ -100,6 +101,8 @@ bup repositories.
 %prep
 %autosetup -n %{name}-%{commit} -S git
 cp %{SOURCE1} .
+mkdir bup-web
+cp %{SOURCE3} bup-web/README.Fedora.md
 
 
 %build
@@ -148,13 +151,14 @@ make test PYTHON=%{__python2}
 
 
 %files web
+%doc bup-web/README.Fedora.md
 %{_libdir}/%{name}/cmd/bup-web
 %{_libdir}/%{name}/web/
 %{_userunitdir}/bup-web.service
 %{_mandir}/man1/bup-web.1*
 
 %files
-%doc README.md README.Fedora
+%doc README.md README.Fedora.md
 %license LICENSE
 %{_bindir}/%{name}
 %{_libdir}/%{name}/
@@ -166,10 +170,12 @@ make test PYTHON=%{__python2}
 
 
 %changelog
-* Sun Nov 22 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.3
+* Mon Nov 23 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.3
 - Split bup web server into a separate sub-package.
 - Added systemd service for running the bup web server.
 - Added a work-around for a bug in systemd's %%systemd_user_post macro.
+- Added a README with Fedora-specific notes on using the bup-web package.
+- Converted the main README with Fedora-specific notes to Markdown.
 
 * Wed Oct 14 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.2
 - Added perl(Time::HiRes) to BuildRequires since it is required for running the

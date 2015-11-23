@@ -1,6 +1,6 @@
 [Unit]
 Description=Web server for browsing through bup repositories
-Documentation=man:bup-web(1)
+Documentation=man:bup-web(1) file:/usr/share/doc/bup-web/README.Fedora.md
 After=network.target
 
 [Service]
