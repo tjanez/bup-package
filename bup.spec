@@ -4,7 +4,7 @@
 
 Name: bup
 Version: 0.27
-Release: 0.3%{?prerelease:.%{prerelease}}%{?dist}
+Release: 0.4%{?prerelease:.%{prerelease}}%{?dist}
 Summary: Very efficient backup system based on the git packfile format
 
 # all of the code is licensed as GNU Lesser General Public License v2, except:
@@ -87,7 +87,7 @@ virtual machine images). Some of its features are:
 License: LGPLv2
 Summary: Web server for browsing through bup repositories
 URL: https://bup.github.io/
-Requires: bup = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 Requires: python-tornado
 Requires(post): systemd
 Requires(preun): systemd
@@ -170,6 +170,9 @@ make test PYTHON=%{__python2}
 
 
 %changelog
+* Fri Dec 04 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.4
+- Made bup-web subpackage Requires on the base package arch-specific.
+
 * Mon Nov 23 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.3
 - Split bup web server into a separate sub-package.
 - Added systemd service for running the bup web server.
