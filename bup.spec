@@ -4,7 +4,7 @@
 
 Name: bup
 Version: 0.27
-Release: 0.4%{?prerelease:.%{prerelease}}%{?dist}
+Release: 1%{?prerelease:.%{prerelease}}%{?dist}
 Summary: Very efficient backup system based on the git packfile format
 
 # all of the code is licensed as GNU Lesser General Public License v2, except:
@@ -100,6 +100,12 @@ bup repositories.
 
 %prep
 %autosetup -n %{name}-%{commit} -S git
+
+# We need an empty line after %%autosetup otherwise it tries to feed the
+# following line (i.e. 'cp %%{SOURCE1} .') to the git command.
+# This bug only occurs on EPEL 7 and is fixed in rpm-4.11.3-16.el7
+# (https://bugzilla.redhat.com/show_bug.cgi?id=1225118).
+# Remove the work-around after this release of rpm hits the koji build servers.
 cp %{SOURCE1} .
 mkdir bup-web
 cp %{SOURCE3} bup-web/README.Fedora.md
@@ -170,6 +176,10 @@ make test PYTHON=%{__python2}
 
 
 %changelog
+* Mon Dec 14 2015 Tadej Janež <tadej.j@nez.si> 0.27-1
+- Initial release in Fedora 22+ and EPEL 7.
+- Added a workaround for an %%autosetup bug on EPEL 7.
+
 * Fri Dec 04 2015 Tadej Janež <tadej.j@nez.si> 0.27-0.4
 - Made bup-web subpackage Requires on the base package arch-specific.
 
