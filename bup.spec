@@ -4,7 +4,7 @@
 
 Name: bup
 Version: 0.27
-Release: 1%{?prerelease:.%{prerelease}}%{?dist}
+Release: 2%{?prerelease:.%{prerelease}}%{?dist}
 Summary: Very efficient backup system based on the git packfile format
 
 # all of the code is licensed as GNU Lesser General Public License v2, except:
@@ -176,6 +176,9 @@ make test PYTHON=%{__python2}
 
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.27-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Mon Dec 14 2015 Tadej Janež <tadej.j@nez.si> 0.27-1
 - Initial release in Fedora 22+ and EPEL 7.
 - Added a workaround for an %%autosetup bug on EPEL 7.
