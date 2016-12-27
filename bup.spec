@@ -1,10 +1,25 @@
-# Uncomment the following RPM macro if you use a prerelease version:
-# %%global prerelease rc4
-%global commit d612d9a599590cb53a76711754f9e031f66a330a
+# render_template(src, dest):
+# Renders the source template (using %%expand macro) and copies it to the
+# destination path.
+# Arguments:
+#   - src: path of the source template to render
+#   - dest: path of the destination file
+%define render_template()\
+if [[ %# -ne 2 ]]; then\
+    echo "Invalid number of arguments to %0 macro: %#"\
+    exit 1\
+fi\
+cat << 'EOF' > %2\
+%{expand:%(cat %1)}\
+EOF
+
+%global commit0 d926749abdfe849117bf95c721d6f1858fef1d12
+%global gittag0 0.28.1
+%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 Name: bup
-Version: 0.27
-Release: 2%{?prerelease:.%{prerelease}}%{?dist}
+Version: %{gittag0}
+Release: 1%{?dist}
 Summary: Very efficient backup system based on the git packfile format
 
 # all of the code is licensed as GNU Lesser General Public License v2, except:
@@ -14,31 +29,10 @@ Summary: Very efficient backup system based on the git packfile format
 # - definition of relpath() function in wvtest.py: Python License
 License: LGPLv2 and BSD and Python
 URL: https://bup.github.io/
-Source0: https://github.com/%{name}/%{name}/archive/%{commit}/%{name}-%{commit}.tar.gz
+Source0: https://github.com/%{name}/%{name}/archive/%{gittag0}/%{name}-%{version}.tar.gz
 Source1: README.Fedora.md
 Source2: bup-web.service
 Source3: README-bup-web.Fedora.md
-
-# Replace calls to 'python' with calls to '$PYTHON' in all tests. In
-# combination with setting the 'PYTHON' environment variable to 'python2', this
-# ensures compatibily after switching to Python3 by default.
-Patch0: 0001-Tests-replace-calls-to-python-with-calls-to-PYTHON.patch
-# Replace all python shebangs with explicit python2 shebangs. This will ensure
-# compatibility after switching to Python3 by default.
-Patch1: 0002-Replace-all-python-shebangs-with-explicit-python2-sh.patch
-# Update GNU LGPLv2 license text with the latest version.
-Patch2: 0003-LICENSE-update-to-the-current-GNU-LGPLv2-text.patch
-# Prevent building and installation of bup's HTML documentation since it
-# doesn't add any value (it is the same as man pages).
-Patch3: 0004-Prevent-building-and-installation-of-HTML-documentat.patch
-# Remove support for 'par2' due to issues with the version in Fedora
-# For more info, see README.Fedora
-Patch4: 0005-Remove-support-for-par2-due-to-issues-with-the-versi.patch
-# Temporarily disable test_from_path_error() test that fails on Fedora Koji
-# and COPR build systems.
-# This issue has been reported upstream:
-# https://groups.google.com/d/msg/bup-list/7K0gD274i_A/6ZjA1La6VK8J
-Patch5: 0006-Disable-test_from_path_error-test-that-fails-on-Fedo.patch
 
 BuildRequires: python2-devel
 BuildRequires: git
@@ -47,13 +41,19 @@ BuildRequires: pandoc
 # Required for preparing systemd service for 'bup web' command
 BuildRequires: systemd
 # Required for running tests
+BuildRequires: par2cmdline
 BuildRequires: perl(Time::HiRes)
+BuildRequires: pyxattr
+BuildRequires: pylibacl
+BuildRequires: python-tornado
 
 Requires: git
 Requires: pyxattr
 Requires: pylibacl
 # Only required for 'bup fuse' command
 Requires: fuse-python
+# Only required for 'bup fsck' command
+Requires: par2cmdline
 
 
 %description
@@ -99,33 +99,30 @@ bup repositories.
 
 
 %prep
-%autosetup -n %{name}-%{commit} -S git
-
-# We need an empty line after %%autosetup otherwise it tries to feed the
-# following line (i.e. 'cp %%{SOURCE1} .') to the git command.
-# This bug only occurs on EPEL 7 and is fixed in rpm-4.11.3-16.el7
-# (https://bugzilla.redhat.com/show_bug.cgi?id=1225118).
-# Remove the work-around after this release of rpm hits the koji build servers.
-cp %{SOURCE1} .
-mkdir bup-web
-cp %{SOURCE3} bup-web/README.Fedora.md
+%autosetup
 
 
 %build
-# NOTE: bup uses a non-standard configure script which is executed during the
-# execution of the make command.
+# NOTE: We can't use %%configure since bup uses a non-standard configure script
+# which is executed during the execution of the make command.
 # To configure the build process, we need to pass variables to the make
 # command.
-make %{?_smp_mflags} CFLAGS="${CFLAGS:-%optflags}" PYTHON=%{__python2}
+%make_build CFLAGS="${CFLAGS:-%optflags}"
+
+%render_template %{SOURCE1} %{_builddir}/%{buildsubdir}/README.Fedora.md
+%render_template %{SOURCE3} %{_builddir}/%{buildsubdir}/README-bup-web.Fedora.md
 
 
 %install
-# NOTE: bup uses a non-standard configure script, which doesn't support
-# specifying distro-specific paths of the variables defined below.
-# To set the paths, we need to manually pass variables to the make command.
-make install MANDIR=%{buildroot}%{_mandir} \
-    DOCDIR=%{buildroot}%{_docdir}/{%name} BINDIR=%{buildroot}%{_bindir} \
-    LIBDIR=%{buildroot}%{_libdir}/%{name} PYTHON=%{__python2}
+# NOTE: Since bup uses a non-standard configure script, which doesn't support
+# specifying distro-specific paths of the variables defined below, we need to
+# manually pass variables to the make command.
+%make_install \
+    PREFIX=%{_prefix} \
+    MANDIR=%{_mandir} \
+    DOCDIR=%{_pkgdocdir} \
+    BINDIR=%{_bindir} \
+    LIBDIR=%{_libdir}/%{name}
 
 # Fix hard-coded libdir location in bup's executable
 sed -i 's|/lib/bup|/%{_lib}/bup|' %{buildroot}%{_bindir}/bup
@@ -134,18 +131,29 @@ sed -i 's|/lib/bup|/%{_lib}/bup|' %{buildroot}%{_bindir}/bup
 mkdir -p %{buildroot}%{_userunitdir}
 install -p -m 0644 %{SOURCE2} %{buildroot}%{_userunitdir}
 
+# Install READMEs and Notable changes manually
+# NOTE: This is necessary since mixing the %%doc with relative paths and
+# installation of files directly into %%_pkgdocdir in the same source package
+# is forbidden. For more details, see:
+# https://fedoraproject.org/wiki/Packaging:Guidelines#Documentation
+install -p -m 0644 README.md %{buildroot}%{_pkgdocdir}
+install -p -m 0644 README*.Fedora.md %{buildroot}%{_pkgdocdir}
+install -p -m 0644 note/*.md %{buildroot}%{_pkgdocdir}
+
+
 %check
-# Run the built-in test suite containing 3800+ tests
-# (it takes < 100 seconds on a modern computer)
-make test PYTHON=%{__python2}
+# Run the built-in test suite containing 4200+ tests
+%make_build test
 
 
 %post web
-# NOTE: %%systemd_user_post macro is currently broken.
-# Upstream pull request: https://github.com/systemd/systemd/pull/1986
-# After resolving this upstream, replace the line below with:
-# %%systemd_user_post bup-web.service
+%if 0%{?fedora} >= 24
+%systemd_user_post bup-web.service
+%else
+# NOTE: %%systemd_user_post macro is broken in systemd < v229, hence we need
+# this work-around.
 %systemd_post \\--user \\--global bup-web.service
+%endif
 
 
 %preun web
@@ -157,14 +165,14 @@ make test PYTHON=%{__python2}
 
 
 %files web
-%doc bup-web/README.Fedora.md
 %{_libdir}/%{name}/cmd/bup-web
 %{_libdir}/%{name}/web/
 %{_userunitdir}/bup-web.service
 %{_mandir}/man1/bup-web.1*
+%{_pkgdocdir}/bup-web.html
+%{_pkgdocdir}/README-bup-web.Fedora.md
 
 %files
-%doc README.md README.Fedora.md
 %license LICENSE
 %{_bindir}/%{name}
 %{_libdir}/%{name}/
@@ -173,9 +181,33 @@ make test PYTHON=%{__python2}
 %{_mandir}/man1/%{name}.1*
 %{_mandir}/man1/%{name}-*.1*
 %exclude %{_mandir}/man1/bup-web.1*
+%{_pkgdocdir}/
+%exclude %{_pkgdocdir}/bup-web.html
+%exclude %{_pkgdocdir}/README-bup-web.Fedora.md
 
 
 %changelog
+* Tue Dec 27 2016 Tadej Janež <tadej.j@nez.si> 0.28.1-1
+- Updated to 0.28.1 release.
+- Enabled 'par2' support in 'bup fsck'.
+- Made tests run in parallel.
+- Packaged HTML documentation.
+- Dropped all patches.
+- Updated and modernized spec file:
+  - Use %%make_build macro.
+  - Use %%make_install macro.
+  - Simplify %%make_install part since bup now properly implements DESTDIR
+    environment variable.
+  - Stop mixing the %%doc with relative paths and installation of files
+    directly into %%_pkgdocdir.
+  - Use %%systemd_user_post macro on Fedora 24+.
+  - Implement and use %%render_template macro to render READMEs containing
+    RPM macros using %%expand macro.
+  - Add additional BuildRequires needed by tests.
+  - Follow the latest SourceURL packaging guidelines and reference git tag
+    instead of commit revision in Source0 URL.
+  - Drop special prerelease handling.
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.27-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
