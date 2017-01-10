@@ -1,6 +1,21 @@
 Notes on Fedora bup Package
 ===========================
 
+Changes requiring attention when upgrading from 0.28.1 to 0.29
+--------------------------------------------------------------
+
+- The index format has been adjusted to handle a larger number of entries,
+  which will trigger a full index rebuild on the next index update, making that
+  run more expensive than usual.
+
+- The `gc` command should now clean up its temporary bloom filters, but filters
+  created by earlier invocations may still exist in your repositories in the
+  `objects/pack/` directory as `tmp-gc-*.bloom` files. It should be safe to
+  delete these files when no bup commands are running.
+
+For the complete list of changes and bug fixes, consult:
+- %{_pkgdocdir}/0.29-from-0.28.1.md.
+
 Changes requiring attention when upgrading from 0.27 to 0.28.1
 --------------------------------------------------------------
 

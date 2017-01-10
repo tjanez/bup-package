@@ -13,8 +13,8 @@ cat << 'EOF' > %2\
 %{expand:%(cat %1)}\
 EOF
 
-%global commit0 d926749abdfe849117bf95c721d6f1858fef1d12
-%global gittag0 0.28.1
+%global commit0 c9da6185f8aa82069daf0ef0e438dc2d7c4f6ce8
+%global gittag0 0.29
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 Name: bup
@@ -35,19 +35,21 @@ Source2: bup-web.service
 Source3: README-bup-web.Fedora.md
 
 BuildRequires: python2-devel
-BuildRequires: git
+BuildRequires: git-core
 # Required for building documentation
 BuildRequires: pandoc
 # Required for preparing systemd service for 'bup web' command
 BuildRequires: systemd
 # Required for running tests
 BuildRequires: par2cmdline
+BuildRequires: perl(Getopt::Long)
+BuildRequires: perl(Pod::Usage)
 BuildRequires: perl(Time::HiRes)
 BuildRequires: pyxattr
 BuildRequires: pylibacl
 BuildRequires: python-tornado
 
-Requires: git
+Requires: git-core
 Requires: pyxattr
 Requires: pylibacl
 # Only required for 'bup fuse' command
@@ -109,8 +111,8 @@ bup repositories.
 # command.
 %make_build CFLAGS="${CFLAGS:-%optflags}"
 
-%render_template %{SOURCE1} %{_builddir}/%{buildsubdir}/README.Fedora.md
-%render_template %{SOURCE3} %{_builddir}/%{buildsubdir}/README-bup-web.Fedora.md
+%render_template %{SOURCE1} %{_builddir}/%{buildsubdir}/%{basename:%SOURCE1}
+%render_template %{SOURCE3} %{_builddir}/%{buildsubdir}/%{basename:%SOURCE3}
 
 
 %install
@@ -187,6 +189,16 @@ install -p -m 0644 note/*.md %{buildroot}%{_pkgdocdir}
 
 
 %changelog
+* Tue Jan 10 2017 Tadej Janež <tadej.j@nez.si> 0.29-1
+- Updated to 0.29 release.
+- Replaced 'git' requirement with 'git-core' which provides just core git with
+  minimal extra dependencies (e.g. doesn't require numerous Perl modules).
+- Added missing Perl BuildRequirements masked by the full 'git' install:
+  - perl(Getopt::Long)
+  - perl(Pod::Usage)
+- Updated spec file:
+  - Use %%{basename: ...} when rendering README templates.
+
 * Tue Dec 27 2016 Tadej Janež <tadej.j@nez.si> 0.28.1-1
 - Updated to 0.28.1 release.
 - Enabled 'par2' support in 'bup fsck'.
